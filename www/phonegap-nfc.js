@@ -449,8 +449,10 @@ var nfc = {
         }
     },
 
-    readMifareSecBloc: function (sector, block, win, fail) {
-        cordova.exec(win, fail, "NfcPlugin", "readMf_SB", [sector, block]);
+    readMifareSectorBlock: function (sector, block, key, win, fail) {
+        if (!key) key = "0xFF 0xFF 0xFF 0xFF 0xFF 0xFF";
+        var buffer = util.hexStringToArrayBuffer(key);
+        cordova.exec(win, fail, "NfcPlugin", "readMf_SB", [sector, block, buffer]);
     },
 
     makeReadOnly: function (win, fail) {
