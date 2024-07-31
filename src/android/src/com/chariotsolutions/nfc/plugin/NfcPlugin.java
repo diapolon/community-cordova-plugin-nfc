@@ -387,7 +387,6 @@ public class NfcPlugin extends CordovaPlugin {
  	MifareClassic mfc = MifareClassic.get(tag);
  	try {
 	      	mfc.connect();		
-		
 	      	boolean auth = mfc.authenticateSectorWithKeyB(sector, key);
 		if (auth) {	   	   	
 	        	bIndex = mfc.sectorToBlock(sector);  
@@ -426,12 +425,16 @@ public class NfcPlugin extends CordovaPlugin {
 	String status = "ko";
  	MifareClassic mfc = MifareClassic.get(tag);
  	try {
-	      	mfc.connect();		
-		
+	      	mfc.connect();				
 	      	boolean auth = mfc.authenticateSectorWithKeyB(sector, key);
 		if (auth) {	   	   	
 	        	int bIndex = mfc.sectorToBlock(sector);  
-	        	mfc.writeBlock(bIndex + block, bWrite);	        	
+			try {
+	        		mfc.writeBlock(bIndex + block, bWrite);	 
+				status = "ok";
+			} catch (IOException e) {
+				status = "ko";
+			}	
 		} else {
                 	callbackContext.error("Error authenticate");	            
 		}       
