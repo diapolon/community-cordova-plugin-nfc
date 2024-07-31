@@ -419,11 +419,11 @@ public class NfcPlugin extends CordovaPlugin {
 	CordovaArgs args = new CordovaArgs(data);
 	byte[] key = args.getArrayBuffer(2);
 	byte[] bWrite = new byte[16];
-        byte[] newdata = data.getString(3).getBytes(StandardCharsets.US_ASCII);
+        byte[] newdata = data.getString(3).getBytes();
         System.arraycopy(newdata, 0, bWrite, 0, newdata.length);
 	    
     	Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-	bool status = false;
+	String status = "ko";
  	MifareClassic mfc = MifareClassic.get(tag);
  	try {
 	      	mfc.connect();		
