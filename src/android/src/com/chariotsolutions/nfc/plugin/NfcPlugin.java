@@ -372,30 +372,30 @@ public class NfcPlugin extends CordovaPlugin {
     	int sector = Integer.parseInt(data.getString(0));
     	int block = Integer.parseInt(data.getString(1));
     	Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
- 		byte[] data_mf;
- 		String data_nfc = "";
- 		MifareClassic mfc = MifareClassic.get(tag);
- 		try {
-	      mfc.connect();
-	      boolean auth2 = mfc.authenticateSectorWithKeyA(sector, MifareClassic.KEY_DEFAULT);
-		  if (auth2) {
-	   	   	int bIndex = 0;
-	        bIndex = mfc.sectorToBlock(sector);  
-	        data_mf = mfc.readBlock(bIndex + block);
-	        data_nfc = getHexaString(data_mf).trim();
-		  }        
-	    } catch (IOException e) {
+ 	byte[] data_mf;
+ 	String data_nfc = "";
+	int bIndex = 0;
+ 	MifareClassic mfc = MifareClassic.get(tag);
+ 	try {
+	      	mfc.connect();
+	      	boolean auth2 = mfc.authenticateSectorWithKeyA(sector, MifareClassic.KEY_DEFAULT);
+		if (auth2) {	   	   	
+	        	bIndex = mfc.sectorToBlock(sector);  
+	        	data_mf = mfc.readBlock(bIndex + block);
+	        	data_nfc = getHexaString(data_mf).trim();
+		}        
+	} catch (IOException e) {
             callbackContext.error("No connection");	        
-	    } finally {
-	      if (mfc != null) {
-	        try {
-	          mfc.close();
-	        } catch(IOException e) {
-                callbackContext.error("Error closing tag");	            
-	        }
-	     }
-	   }
-       callbackContext.success(data_nfc);
+	} finally {
+		if (mfc != null) {
+			try {
+	          		mfc.close();
+	        	} catch(IOException e) {
+                		callbackContext.error("Error closing tag");	            
+	        	}
+	     	}
+	}
+	callbackContext.success(data_nfc);
     }
 
     private void eraseTag(CallbackContext callbackContext) {
