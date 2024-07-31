@@ -378,12 +378,14 @@ public class NfcPlugin extends CordovaPlugin {
  	MifareClassic mfc = MifareClassic.get(tag);
  	try {
 	      	mfc.connect();
-	      	boolean auth2 = mfc.authenticateSectorWithKeyA(sector, MifareClassic.KEY_DEFAULT);
-		if (auth2) {	   	   	
+	      	boolean auth = mfc.authenticateSectorWithKeyB(sector, MifareClassic.KEY_DEFAULT);
+		if (auth) {	   	   	
 	        	bIndex = mfc.sectorToBlock(sector);  
 	        	data_mf = mfc.readBlock(bIndex + block);
 	        	data_nfc = getHexaString(data_mf).trim();
-		}        
+		} else {
+                	callbackContext.error("Error authenticate");	            
+		}       
 	} catch (IOException e) {
             callbackContext.error("No connection");	        
 	} finally {
