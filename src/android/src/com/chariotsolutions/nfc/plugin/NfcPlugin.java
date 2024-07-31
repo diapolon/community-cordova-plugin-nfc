@@ -361,6 +361,39 @@ public class NfcPlugin extends CordovaPlugin {
         }
     }
 
+    private void readMifare_SB(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        if (getIntent() == null) {
+            callbackContext.error("Failed to write tag, received null intent");
+        }
+    	int sector = Integer.parseInt(data.getString(0));
+    	int block = Integer.parseInt(data.getString(1));
+    	Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+ 		byte[] data_mf;
+ 		String data_nfc = "";
+ 		MifareClassic mfc = MifareClassic.get(tag);
+ 		try {
+	      mfc.connect();
+	      boolean auth2 = mfc.authenticateSectorWithKeyA(sector, MifareClassic.KEY_DEFAULT);
+		  if (auth2) {
+	   	   	int bIndex = 0;
+	        bIndex = mfc.sectorToBlock(sector);  
+	        data_mf = mfc.readBlock(bIndex + block);
+	        data_nfc = getHexaString(data_mf).trim();
+		  }        
+	    } catch (IOException e) {
+            callbackContext.error("No connection");	        
+	    } finally {
+	      if (mfc != null) {
+	        try {
+	          mfc.close();
+	        } catch(IOException e) {
+                callbackContext.error("Error closing tag");	            
+	        }
+	     }
+	   }
+       callbackContext.success(data_nfc);
+    }
+
     private void eraseTag(CallbackContext callbackContext) {
         Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         NdefRecord[] records = {
@@ -868,4 +901,17 @@ public class NfcPlugin extends CordovaPlugin {
             }
         });
     }
+
+    private String getHexaString(byte[] data) {
+		String cardNumber = bytesToString(data);
+		return cardNumber; 
+	}
+    
+    private static String bytesToString(byte[] ary) {
+		final StringBuilder result = new StringBuilder();
+		for (int i = 0; i < ary.length; ++i) {
+			result.append(Character.valueOf((char)ary[i]));
+		}
+		return result.toString();
+	}
 }
