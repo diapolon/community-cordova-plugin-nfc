@@ -418,7 +418,10 @@ public class NfcPlugin extends CordovaPlugin {
     	int block = Integer.parseInt(data.getString(1));
 	CordovaArgs args = new CordovaArgs(data);
 	byte[] key = args.getArrayBuffer(2);
-	String newdata = data.getString(3);	
+	byte[] bWrite = new byte[16];
+        byte[] newdata = data.getString(3).getBytes(StandardCharsets.US_ASCII);
+        System.arraycopy(newdata, 0, bWrite, 0, newdata.length);
+	    
     	Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 	bool status = false;
  	MifareClassic mfc = MifareClassic.get(tag);
@@ -428,7 +431,7 @@ public class NfcPlugin extends CordovaPlugin {
 	      	boolean auth = mfc.authenticateSectorWithKeyB(sector, key);
 		if (auth) {	   	   	
 	        	int bIndex = mfc.sectorToBlock(sector);  
-	        	mfc.writeBlock(bIndex + block, newdata);	        	
+	        	mfc.writeBlock(bIndex + block, bWrite);	        	
 		} else {
                 	callbackContext.error("Error authenticate");	            
 		}       
