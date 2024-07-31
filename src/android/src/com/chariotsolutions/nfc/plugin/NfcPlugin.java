@@ -62,8 +62,7 @@ public class NfcPlugin extends CordovaPlugin {
     private static final String NDEF_MIME = "ndef-mime";
     private static final String NDEF_FORMATABLE = "ndef-formatable";
     private static final String TAG_DEFAULT = "tag";
-
-    private static final String READMIFARE ="readMf";
+    
     private static final String READMIFARE_SB="readMf_SB";
     
     private static final String READER_MODE = "readerMode";
@@ -382,8 +381,7 @@ public class NfcPlugin extends CordovaPlugin {
 	int bIndex = 0;
  	MifareClassic mfc = MifareClassic.get(tag);
  	try {
-	      	mfc.connect();
-		System.Threading.Thread.Sleep(100);
+	      	mfc.connect();		
 		
 	      	boolean auth = mfc.authenticateSectorWithKeyB(sector, key);
 		if (auth) {	   	   	
