@@ -63,7 +63,8 @@ public class NfcPlugin extends CordovaPlugin {
     private static final String NDEF_FORMATABLE = "ndef-formatable";
     private static final String TAG_DEFAULT = "tag";
     
-    private static final String READMIFARE_SB="readMf_SB";
+    private static final String READ_MIFARE_SB="readMf_SB";
+    private static final String WRITE_MIFARE_SB="writeMf_SB";
     
     private static final String READER_MODE = "readerMode";
     private static final String DISABLE_READER_MODE = "disableReaderMode";
@@ -181,8 +182,12 @@ public class NfcPlugin extends CordovaPlugin {
                 removeDefaultTag(callbackContext);
                 break;
 
-	    case READMIFARE_SB:		
+	    case READ_MIFARE_SB:		
 		readMifare_SB(data, callbackContext);
+		break;
+			
+	    case WRITE_MIFARE_SB:		
+		writeMifare_SB(data, callbackContext);
 		break;
 			
             case WRITE_TAG:
@@ -404,6 +409,45 @@ public class NfcPlugin extends CordovaPlugin {
 	}
 	callbackContext.success(data_nfc);
     }
+
+    private void writeMifare_SB(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        if (getIntent() == null) {
+            callbackContext.error("Failed to write tag, received null intent");
+        }
+    	int sector = Integer.parseInt(data.getString(0));
+    	int block = Integer.parseInt(data.getString(1));
+	CordovaArgs args = new CordovaArgs(data);
+	byte[] key = args.getArrayBuffer(2);
+	String newdata = data.getString(3);	
+    	Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+ 	byte[] data_mf;
+ 	String data_nfc = "";
+	int bIndex = 0;
+ 	MifareClassic mfc = MifareClassic.get(tag);
+ 	try {
+	      	mfc.connect();		
+		
+	      	boolean auth = mfc.authenticateSectorWithKeyB(sector, key);
+		if (auth) {	   	   	
+	        	bIndex = mfc.sectorToBlock(sector);  
+	        	data_mf = mfc.writeBlock(bIndex + block);
+	        	data_nfc = getHexaString(data_mf).trim();
+		} else {
+                	callbackContext.error("Error authenticate");	            
+		}       
+	} catch (IOException e) {
+		callbackContext.error(e.getMessage());            
+	} finally {
+		if (mfc != null) {
+			try {
+	          		mfc.close();
+	        	} catch(IOException e) {
+				callbackContext.error(e.getMessage());                		
+	        	}
+	     	}
+	}
+	callbackContext.success(data_nfc);
+    }	
 
     private void eraseTag(CallbackContext callbackContext) {
         Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
