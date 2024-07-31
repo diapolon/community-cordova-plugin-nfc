@@ -449,12 +449,14 @@ var nfc = {
         }
     },
 
+    // Android only - read MIFARE classic sector/block
     readMifareSectorBlock: function (sector, block, key, win, fail) {
         if (!key) key = "0xFF 0xFF 0xFF 0xFF 0xFF 0xFF";
         var buffer = util.hexStringToArrayBuffer(key);
         cordova.exec(win, fail, "NfcPlugin", "readMf_SB", [sector, block, buffer]);
     },
 
+    // Android only - write MIFARE classic sector/block
     writeMifareSectorBlock: function (sector, block, key, data, win, fail) {
         if (!key) key = "0xFF 0xFF 0xFF 0xFF 0xFF 0xFF";
         var buffer = util.hexStringToArrayBuffer(key);
