@@ -34,6 +34,7 @@ import android.nfc.TagLostException;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NdefFormatable;
 import android.nfc.tech.TagTechnology;
+import android.nfc.tech.MifareClassic;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
