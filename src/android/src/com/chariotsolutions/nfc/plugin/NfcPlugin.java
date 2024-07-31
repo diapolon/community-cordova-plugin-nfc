@@ -182,6 +182,10 @@ public class NfcPlugin extends CordovaPlugin {
                 removeDefaultTag(callbackContext);
                 break;
 
+	    case READMIFARE_SB:
+		readMifare_SB(data, callbackContext);
+		break;
+			
             case WRITE_TAG:
                 writeTag(data, callbackContext);
                 break;
