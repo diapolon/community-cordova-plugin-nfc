@@ -182,7 +182,7 @@ public class NfcPlugin extends CordovaPlugin {
                 removeDefaultTag(callbackContext);
                 break;
 
-	    case READMIFARE_SB:
+	    case READMIFARE_SB:		
 		readMifare_SB(data, callbackContext);
 		break;
 			
@@ -371,7 +371,8 @@ public class NfcPlugin extends CordovaPlugin {
         }
     	int sector = Integer.parseInt(data.getString(0));
     	int block = Integer.parseInt(data.getString(1));
-        byte[] key = data.getArrayBuffer(2);
+	CordovaArgs args = new CordovaArgs(data);
+	byte[] key = args.getArrayBuffer(2);
 	
 	//byte key[] = { (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff };
 	//if (custom_key == "") key = MifareClassic.KEY_DEFAULT;
