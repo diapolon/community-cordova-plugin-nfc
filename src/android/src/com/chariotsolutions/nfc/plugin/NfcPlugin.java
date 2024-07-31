@@ -63,6 +63,9 @@ public class NfcPlugin extends CordovaPlugin {
     private static final String NDEF_FORMATABLE = "ndef-formatable";
     private static final String TAG_DEFAULT = "tag";
 
+    private static final String READMIFARE ="readMf";
+    private static final String READMIFARE_SB="readMf_SB";
+    
     private static final String READER_MODE = "readerMode";
     private static final String DISABLE_READER_MODE = "disableReaderMode";
 
