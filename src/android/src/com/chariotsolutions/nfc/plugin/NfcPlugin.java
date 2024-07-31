@@ -371,9 +371,10 @@ public class NfcPlugin extends CordovaPlugin {
         }
     	int sector = Integer.parseInt(data.getString(0));
     	int block = Integer.parseInt(data.getString(1));
-	String custom_key = data.getString(2);
-	byte key[] = { (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff };
-	if (custom_key == "") key = MifareClassic.KEY_DEFAULT;
+        byte[] key = data.getArrayBuffer(2);
+	
+	//byte key[] = { (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff };
+	//if (custom_key == "") key = MifareClassic.KEY_DEFAULT;
     	Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
  	byte[] data_mf;
  	String data_nfc = "";
