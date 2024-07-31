@@ -383,7 +383,7 @@ public class NfcPlugin extends CordovaPlugin {
  	MifareClassic mfc = MifareClassic.get(tag);
  	try {
 	      	mfc.connect();
-
+		System.Threading.Thread.Sleep(100);
 		
 	      	boolean auth = mfc.authenticateSectorWithKeyB(sector, key);
 		if (auth) {	   	   	
