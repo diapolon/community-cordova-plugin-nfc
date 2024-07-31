@@ -387,13 +387,13 @@ public class NfcPlugin extends CordovaPlugin {
                 	callbackContext.error("Error authenticate");	            
 		}       
 	} catch (IOException e) {
-            callbackContext.error("No connection");	        
+		callbackContext.error(e.getMessage());            
 	} finally {
 		if (mfc != null) {
 			try {
 	          		mfc.close();
 	        	} catch(IOException e) {
-                		callbackContext.error("Error closing tag");	            
+				callbackContext.error(e.getMessage());                		
 	        	}
 	     	}
 	}
