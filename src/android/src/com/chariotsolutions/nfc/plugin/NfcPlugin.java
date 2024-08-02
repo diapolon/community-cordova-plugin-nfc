@@ -401,10 +401,11 @@ public class NfcPlugin extends CordovaPlugin {
 	      	boolean auth = mfc.authenticateSectorWithKeyB(sector, key);
 		if (auth) {	
 			int bIndex = 0;
-			for (int block = 0; block <= 3; block++) {	    	      		
+			for (int block = 0; block <= 2; block++) {	    	      		
 	    	      		bIndex = mfc.sectorToBlock(sector);    
 	    	      		data_mf = mfc.readBlock(bIndex+block);
-	    	      		data_nfc = data_nfc +";"+ getHexaString(data_mf).trim();
+				if (data_nfc != "") data_nfc += ";";
+	    	      		data_nfc += getHexaString(data_mf).trim();
 	    	    	}	        	
 		} else {
                 	callbackContext.error("Error authenticate");	            
