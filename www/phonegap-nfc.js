@@ -449,25 +449,39 @@ var nfc = {
         }
     },
 
-    // Android only - read MIFARE classic sector/block
+    // Android only - read MIFARE classic sector single block
     readMifareBlock: function (sector, block, key, win, fail) {
         if (!key) key = "0xFF 0xFF 0xFF 0xFF 0xFF 0xFF";
         var buffer = util.hexStringToArrayBuffer(key);
         cordova.exec(win, fail, "NfcPlugin", "readMifareBlock", [sector, block, buffer]);
     },
 
-    // Android only - write MIFARE classic sector/block
+    // Android only - write MIFARE classic sector single block
     writeMifareBlock: function (sector, block, key, data, win, fail) {
         if (!key) key = "0xFF 0xFF 0xFF 0xFF 0xFF 0xFF";
         var buffer = util.hexStringToArrayBuffer(key);
         cordova.exec(win, fail, "NfcPlugin", "writeMifareBlock", [sector, block, buffer, data]);
     },
 
+    // Android only - read MIFARE classic sector blocks
+    readMifareSector: function (sector, key, win, fail) {
+        if (!key) key = "0xFF 0xFF 0xFF 0xFF 0xFF 0xFF";
+        var buffer = util.hexStringToArrayBuffer(key);
+        cordova.exec(win, fail, "NfcPlugin", "readMifareSector", [sector, buffer]);
+    },
+
+    // Android only - write MIFARE classic sector blocks
+    writeMifareSector: function (sector, key, data0, data1, data2, win, fail) {
+        if (!key) key = "0xFF 0xFF 0xFF 0xFF 0xFF 0xFF";
+        var buffer = util.hexStringToArrayBuffer(key);
+        cordova.exec(win, fail, "NfcPlugin", "writeMifareSector", [sector, buffer, data0, data1, data2]);
+    },
+    
     // Android only - change MIFARE classic sector password
-    writeMifarePassword: function (sector, key, newkey, win, fail) {        
+    writeMifareSectorPassword: function (sector, key, newkey, win, fail) {        
         var buffer = util.hexStringToArrayBuffer(key);
         var buffer2 = util.hexStringToArrayBuffer(newkey);
-        cordova.exec(win, fail, "NfcPlugin", "writeMifarePassword", [sector, buffer, buffer2]);
+        cordova.exec(win, fail, "NfcPlugin", "writeMifareSectorPassword", [sector, buffer, buffer2]);
     },
 
     makeReadOnly: function (win, fail) {
