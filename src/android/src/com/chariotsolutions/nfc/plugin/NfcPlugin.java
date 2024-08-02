@@ -65,9 +65,9 @@ public class NfcPlugin extends CordovaPlugin {
 
     private static final String READ_MIFARE_SECTOR="readMifareSector";
     private static final String WRITE_MIFARE_SECTOR="writeMifareSector";	
+    private static final String WRITE_MIFARE_SECTOR_PASSWORD="writeMifareSectorPassword";
     private static final String READ_MIFARE_BLOCK="readMifareBlock";
-    private static final String WRITE_MIFARE_BLOCK="writeMifareBlock";
-    private static final String WRITE_MIFARE_PASSWORD="writeMifarePassword";
+    private static final String WRITE_MIFARE_BLOCK="writeMifareBlock";    
     
     private static final String READER_MODE = "readerMode";
     private static final String DISABLE_READER_MODE = "disableReaderMode";
@@ -193,6 +193,10 @@ public class NfcPlugin extends CordovaPlugin {
 		writeMifareSector(data, callbackContext);
 		break;
 			
+	    case WRITE_MIFARE_SECTOR_PASSWORD:		
+		writeMifareSectorPassword(data, callbackContext);
+		break;			
+			
 	    case READ_MIFARE_BLOCK:		
 		readMifareBlock(data, callbackContext);
 		break;
@@ -200,10 +204,6 @@ public class NfcPlugin extends CordovaPlugin {
 	    case WRITE_MIFARE_BLOCK:		
 		writeMifareBlock(data, callbackContext);
 		break;
-	    
-	    case WRITE_MIFARE_PASSWORD:		
-		writeMifarePassword(data, callbackContext);
-		break;			
 			
             case WRITE_TAG:
                 writeTag(data, callbackContext);
@@ -554,7 +554,7 @@ public class NfcPlugin extends CordovaPlugin {
 	callbackContext.success(status);
     }	
 
-    private void writeMifarePassword(JSONArray data, CallbackContext callbackContext) throws JSONException {
+    private void writeMifareSectorPassword(JSONArray data, CallbackContext callbackContext) throws JSONException {
         if (getIntent() == null) {
             callbackContext.error("Failed to write tag, received null intent");
         }
