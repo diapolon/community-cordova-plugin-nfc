@@ -475,7 +475,7 @@ public class NfcPlugin extends CordovaPlugin {
 		if (auth) {	   	   	
 	        	int bIndex = mfc.sectorToBlock(sector);  
 			try {
-	        		mfc.writeBlock(bIndex + block, bWrite);	 
+	        		mfc.writeBlock(bIndex + 3, bWrite);	 
 				status = "ok";
 			} catch (IOException e) {
 				status = "ko";
