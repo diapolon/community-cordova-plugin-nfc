@@ -63,9 +63,9 @@ public class NfcPlugin extends CordovaPlugin {
     private static final String NDEF_FORMATABLE = "ndef-formatable";
     private static final String TAG_DEFAULT = "tag";
     
-    private static final String READ_MIFARE_BLOCK="readMifare_Block";
-    private static final String WRITE_MIFARE_BLOCK="writeMifare_Block";
-    private static final String WRITE_MIFARE_PASSWORD="writeMifare_Password";
+    private static final String READ_MIFARE_BLOCK="readMifareBlock";
+    private static final String WRITE_MIFARE_BLOCK="writeMifareBlock";
+    private static final String WRITE_MIFARE_PASSWORD="writeMifarePassword";
     
     private static final String READER_MODE = "readerMode";
     private static final String DISABLE_READER_MODE = "disableReaderMode";
