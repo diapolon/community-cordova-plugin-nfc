@@ -62,7 +62,9 @@ public class NfcPlugin extends CordovaPlugin {
     private static final String NDEF_MIME = "ndef-mime";
     private static final String NDEF_FORMATABLE = "ndef-formatable";
     private static final String TAG_DEFAULT = "tag";
-    
+
+    private static final String READ_MIFARE_SECTOR="readMifareSector";
+    private static final String WRITE_MIFARE_SECTOR="writeMifareSector";	
     private static final String READ_MIFARE_BLOCK="readMifareBlock";
     private static final String WRITE_MIFARE_BLOCK="writeMifareBlock";
     private static final String WRITE_MIFARE_PASSWORD="writeMifarePassword";
@@ -183,6 +185,14 @@ public class NfcPlugin extends CordovaPlugin {
                 removeDefaultTag(callbackContext);
                 break;
 
+	    case READ_MIFARE_SECTOR:		
+		readMifareSector(data, callbackContext);
+		break;
+			
+	    case WRITE_MIFARE_SECTOR:		
+		writeMifareSector(data, callbackContext);
+		break;
+			
 	    case READ_MIFARE_BLOCK:		
 		readMifareBlock(data, callbackContext);
 		break;
@@ -374,9 +384,98 @@ public class NfcPlugin extends CordovaPlugin {
         }
     }
 
-    private void readMifareBlock(JSONArray data, CallbackContext callbackContext) throws JSONException {
+    private void readMifareSector(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        if (getIntent() == null) {
+            callbackContext.error("Failed to read tag, received null intent");
+        }
+    	int sector = Integer.parseInt(data.getString(0));
+	CordovaArgs args = new CordovaArgs(data);
+	byte[] key = args.getArrayBuffer(1);
+		
+    	Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+ 	byte[] data_mf;
+ 	String data_nfc = "";	
+ 	MifareClassic mfc = MifareClassic.get(tag);
+ 	try {
+	      	mfc.connect();		
+	      	boolean auth = mfc.authenticateSectorWithKeyB(sector, key);
+		if (auth) {	
+			int bIndex = 0;
+			for (block = 0; block <= 3; block++) {	    	      		
+	    	      		bIndex = mfc.sectorToBlock(sector);    
+	    	      		data_mf = mfc.readBlock(bIndex+block);
+	    	      		data_nfc = data_nfc +";"+ getHexaString(data_mf).trim();
+	    	    	}	        	
+		} else {
+                	callbackContext.error("Error authenticate");	            
+		}       
+	} catch (IOException e) {
+		callbackContext.error(e.getMessage());            
+	} finally {
+		if (mfc != null) {
+			try {
+	          		mfc.close();
+	        	} catch(IOException e) {
+				callbackContext.error(e.getMessage());                		
+	        	}
+	     	}
+	}
+	callbackContext.success(data_nfc);
+    }
+
+    private void writeMifareSector(JSONArray data, CallbackContext callbackContext) throws JSONException {
         if (getIntent() == null) {
             callbackContext.error("Failed to write tag, received null intent");
+        }
+    	int sector = Integer.parseInt(data.getString(0));    	
+	CordovaArgs args = new CordovaArgs(data);
+	byte[] key = args.getArrayBuffer(1);
+	byte[] bWrite0 = new byte[16];
+	byte[] bWrite1 = new byte[16];
+	byte[] bWrite2 = new byte[16];
+        byte[] newdata0 = data.getString(2).getBytes();
+	byte[] newdata1 = data.getString(3).getBytes();
+	byte[] newdata2 = data.getString(4).getBytes();
+        System.arraycopy(newdata0, 0, bWrite0, 0, newdata0.length);
+	System.arraycopy(newdata1, 0, bWrite1, 0, newdata1.length);
+	System.arraycopy(newdata2, 0, bWrite2, 0, newdata2.length);
+	    
+    	Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+	String status = "ko";
+ 	MifareClassic mfc = MifareClassic.get(tag);
+ 	try {
+	      	mfc.connect();				
+	      	boolean auth = mfc.authenticateSectorWithKeyB(sector, key);
+		if (auth) {				
+			int bIndex = mfc.sectorToBlock(sector);    
+			try {
+				mfc.writeBlock(bIndex + 0, bWrite0);	 
+				mfc.writeBlock(bIndex + 1, bWrite1);	 
+				mfc.writeBlock(bIndex + 2, bWrite2);	 
+				status = "ok";
+			} catch (IOException e) {
+				status = "ko";
+			}	
+		} else {
+                	callbackContext.error("Error authenticate");	            
+		}       
+	} catch (IOException e) {
+		callbackContext.error(e.getMessage());            
+	} finally {
+		if (mfc != null) {
+			try {
+	          		mfc.close();
+	        	} catch(IOException e) {
+				callbackContext.error(e.getMessage());                		
+	        	}
+	     	}
+	}
+	callbackContext.success(status);
+    }		
+	
+    private void readMifareBlock(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        if (getIntent() == null) {
+            callbackContext.error("Failed to read tag, received null intent");
         }
     	int sector = Integer.parseInt(data.getString(0));
     	int block = Integer.parseInt(data.getString(1));
