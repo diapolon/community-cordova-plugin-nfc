@@ -63,8 +63,9 @@ public class NfcPlugin extends CordovaPlugin {
     private static final String NDEF_FORMATABLE = "ndef-formatable";
     private static final String TAG_DEFAULT = "tag";
     
-    private static final String READ_MIFARE_SB="readMf_SB";
-    private static final String WRITE_MIFARE_SB="writeMf_SB";
+    private static final String READ_MIFARE_BLOCK="readMifare_Block";
+    private static final String WRITE_MIFARE_BLOCK="writeMifare_Block";
+    private static final String WRITE_MIFARE_PASSWORD="writeMifare_Password";
     
     private static final String READER_MODE = "readerMode";
     private static final String DISABLE_READER_MODE = "disableReaderMode";
@@ -182,13 +183,17 @@ public class NfcPlugin extends CordovaPlugin {
                 removeDefaultTag(callbackContext);
                 break;
 
-	    case READ_MIFARE_SB:		
-		readMifare_SB(data, callbackContext);
+	    case READ_MIFARE_BLOCK:		
+		readMifareBlock(data, callbackContext);
 		break;
 			
-	    case WRITE_MIFARE_SB:		
-		writeMifare_SB(data, callbackContext);
+	    case WRITE_MIFARE_BLOCK:		
+		writeMifareBlock(data, callbackContext);
 		break;
+	    
+	    case WRITE_MIFARE_PASSWORD:		
+		writeMifarePassword(data, callbackContext);
+		break;			
 			
             case WRITE_TAG:
                 writeTag(data, callbackContext);
@@ -369,7 +374,7 @@ public class NfcPlugin extends CordovaPlugin {
         }
     }
 
-    private void readMifare_SB(JSONArray data, CallbackContext callbackContext) throws JSONException {
+    private void readMifareBlock(JSONArray data, CallbackContext callbackContext) throws JSONException {
         if (getIntent() == null) {
             callbackContext.error("Failed to write tag, received null intent");
         }
@@ -407,7 +412,7 @@ public class NfcPlugin extends CordovaPlugin {
 	callbackContext.success(data_nfc);
     }
 
-    private void writeMifare_SB(JSONArray data, CallbackContext callbackContext) throws JSONException {
+    private void writeMifareBlock(JSONArray data, CallbackContext callbackContext) throws JSONException {
         if (getIntent() == null) {
             callbackContext.error("Failed to write tag, received null intent");
         }
@@ -418,6 +423,48 @@ public class NfcPlugin extends CordovaPlugin {
 	byte[] bWrite = new byte[16];
         byte[] newdata = data.getString(3).getBytes();
         System.arraycopy(newdata, 0, bWrite, 0, newdata.length);
+	    
+    	Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+	String status = "ko";
+ 	MifareClassic mfc = MifareClassic.get(tag);
+ 	try {
+	      	mfc.connect();				
+	      	boolean auth = mfc.authenticateSectorWithKeyB(sector, key);
+		if (auth) {	   	   	
+	        	int bIndex = mfc.sectorToBlock(sector);  
+			try {
+	        		mfc.writeBlock(bIndex + block, bWrite);	 
+				status = "ok";
+			} catch (IOException e) {
+				status = "ko";
+			}	
+		} else {
+                	callbackContext.error("Error authenticate");	            
+		}       
+	} catch (IOException e) {
+		callbackContext.error(e.getMessage());            
+	} finally {
+		if (mfc != null) {
+			try {
+	          		mfc.close();
+	        	} catch(IOException e) {
+				callbackContext.error(e.getMessage());                		
+	        	}
+	     	}
+	}
+	callbackContext.success(status);
+    }	
+
+    private void writeMifarePassword(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        if (getIntent() == null) {
+            callbackContext.error("Failed to write tag, received null intent");
+        }
+    	int sector = Integer.parseInt(data.getString(0));
+	CordovaArgs args = new CordovaArgs(data);
+	byte[] key = args.getArrayBuffer(1);
+	byte[] newkey = args.getArrayBuffer(2);
+	byte[] bWrite = new byte[16];        
+        System.arraycopy(newkey, 0, bWrite, 0, newkey.length);
 	    
     	Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 	String status = "ko";
