@@ -450,17 +450,24 @@ var nfc = {
     },
 
     // Android only - read MIFARE classic sector/block
-    readMifareSectorBlock: function (sector, block, key, win, fail) {
+    readMifareBlock: function (sector, block, key, win, fail) {
         if (!key) key = "0xFF 0xFF 0xFF 0xFF 0xFF 0xFF";
         var buffer = util.hexStringToArrayBuffer(key);
-        cordova.exec(win, fail, "NfcPlugin", "readMf_SB", [sector, block, buffer]);
+        cordova.exec(win, fail, "NfcPlugin", "readMifareBlock", [sector, block, buffer]);
     },
 
     // Android only - write MIFARE classic sector/block
-    writeMifareSectorBlock: function (sector, block, key, data, win, fail) {
+    writeMifareBlock: function (sector, block, key, data, win, fail) {
         if (!key) key = "0xFF 0xFF 0xFF 0xFF 0xFF 0xFF";
         var buffer = util.hexStringToArrayBuffer(key);
-        cordova.exec(win, fail, "NfcPlugin", "writeMf_SB", [sector, block, buffer, data]);
+        cordova.exec(win, fail, "NfcPlugin", "writeMifareBlock", [sector, block, buffer, data]);
+    },
+
+    // Android only - change MIFARE classic sector password
+    writeMifarePassword: function (sector, key, newkey, win, fail) {        
+        var buffer = util.hexStringToArrayBuffer(key);
+        var buffer2 = util.hexStringToArrayBuffer(newkey);
+        cordova.exec(win, fail, "NfcPlugin", "writeMifarePassword", [sector, buffer, buffer2]);
     },
 
     makeReadOnly: function (win, fail) {
