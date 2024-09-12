@@ -434,12 +434,12 @@ public class NfcPlugin extends CordovaPlugin {
 	byte[] bWrite0 = new byte[16];
 	byte[] bWrite1 = new byte[16];
 	byte[] bWrite2 = new byte[16];
-        byte[] newdata0 = data.getString(2).getBytes();
-	byte[] newdata1 = data.getString(3).getBytes();
-	byte[] newdata2 = data.getString(4).getBytes();
-        System.arraycopy(newdata0, 0, bWrite0, 0, newdata0.length);
-	System.arraycopy(newdata1, 0, bWrite1, 0, newdata1.length);
-	System.arraycopy(newdata2, 0, bWrite2, 0, newdata2.length);
+        byte[] data0_new = data.getString(2).getBytes();
+	byte[] data1_new = data.getString(3).getBytes();
+	byte[] data2_new = data.getString(4).getBytes();
+        System.arraycopy(data0_new, 0, bWrite0, 0, data0_new.length);
+	System.arraycopy(data1_new, 0, bWrite1, 0, data1_new.length);
+	System.arraycopy(data2_new, 0, bWrite2, 0, data2_new.length);
 	    
     	Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 	String status = "ko";
@@ -521,8 +521,9 @@ public class NfcPlugin extends CordovaPlugin {
 	CordovaArgs args = new CordovaArgs(data);
 	byte[] key = args.getArrayBuffer(2);
 	byte[] bWrite = new byte[16];
-        byte[] newdata = data.getString(3).getBytes();
-        System.arraycopy(newdata, 0, bWrite, 0, newdata.length);
+	byte[] bRead;
+        byte[] data_new = data.getString(3).getBytes();
+        System.arraycopy(data_new, 0, bWrite, 0, data_new.length);
 	    
     	Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 	String status = "ko";
@@ -534,7 +535,10 @@ public class NfcPlugin extends CordovaPlugin {
 	        	int bIndex = mfc.sectorToBlock(sector);  
 			try {
 	        		mfc.writeBlock(bIndex + block, bWrite);	 
-				status = "ok";
+				bRead = mfc.readBlock(bIndex + block);
+                    		if (Arrays.equals(bRead, bWrite)) {
+					status = "ok";
+				}	
 			} catch (IOException e) {
 				status = "ko";
 			}	
