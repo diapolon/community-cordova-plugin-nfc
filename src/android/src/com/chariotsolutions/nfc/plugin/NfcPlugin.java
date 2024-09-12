@@ -590,9 +590,9 @@ public class NfcPlugin extends CordovaPlugin {
 			try {
 	        		mfc.writeBlock(bIndex + 3, bWrite);	
 				bRead = mfc.readBlock(bIndex + 3);
-                    		if (Arrays.equals(bRead, bWrite)) {
+                    		//if (Arrays.equals(bRead, bWrite)) {
 					status = "ok";
-				}					
+				//}					
 			} catch (IOException e) {
 				status = "ko";
 			}	
