@@ -576,7 +576,7 @@ public class NfcPlugin extends CordovaPlugin {
 	byte[] key = args.getArrayBuffer(1);
 	byte[] newkey = args.getArrayBuffer(2);
 	byte[] bWrite = new byte[16];        
-	byte[] bRead;
+	//byte[] bRead;
         System.arraycopy(newkey, 0, bWrite, 0, newkey.length);
 	    
     	Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
@@ -589,7 +589,7 @@ public class NfcPlugin extends CordovaPlugin {
 	        	int bIndex = mfc.sectorToBlock(sector);  
 			try {
 	        		mfc.writeBlock(bIndex + 3, bWrite);	
-				bRead = mfc.readBlock(bIndex + 3);
+				//bRead = mfc.readBlock(bIndex + 3);
                     		//if (Arrays.equals(bRead, bWrite)) {
 					status = "ok";
 				//}					
