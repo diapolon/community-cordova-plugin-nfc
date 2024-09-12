@@ -434,6 +434,9 @@ public class NfcPlugin extends CordovaPlugin {
 	byte[] bWrite0 = new byte[16];
 	byte[] bWrite1 = new byte[16];
 	byte[] bWrite2 = new byte[16];
+	byte[] bRead0;
+	byte[] bRead1;
+	byte[] bRead2;
         byte[] data0_new = data.getString(2).getBytes();
 	byte[] data1_new = data.getString(3).getBytes();
 	byte[] data2_new = data.getString(4).getBytes();
@@ -453,7 +456,12 @@ public class NfcPlugin extends CordovaPlugin {
 				mfc.writeBlock(bIndex + 0, bWrite0);	 
 				mfc.writeBlock(bIndex + 1, bWrite1);	 
 				mfc.writeBlock(bIndex + 2, bWrite2);	 
-				status = "ok";
+				bRead0 = mfc.readBlock(bIndex + 0);
+				bRead1 = mfc.readBlock(bIndex + 1);
+				bRead2 = mfc.readBlock(bIndex + 2);
+                    		if (Arrays.equals(bRead0, bWrite0) && Arrays.equals(bRead1, bWrite1) && Arrays.equals(bRead2, bWrite2)) {
+					status = "ok";
+				}				
 			} catch (IOException e) {
 				status = "ko";
 			}	
@@ -568,6 +576,7 @@ public class NfcPlugin extends CordovaPlugin {
 	byte[] key = args.getArrayBuffer(1);
 	byte[] newkey = args.getArrayBuffer(2);
 	byte[] bWrite = new byte[16];        
+	byte[] bRead;
         System.arraycopy(newkey, 0, bWrite, 0, newkey.length);
 	    
     	Tag tag = savedIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
@@ -579,8 +588,11 @@ public class NfcPlugin extends CordovaPlugin {
 		if (auth) {	   	   	
 	        	int bIndex = mfc.sectorToBlock(sector);  
 			try {
-	        		mfc.writeBlock(bIndex + 3, bWrite);	 
-				status = "ok";
+	        		mfc.writeBlock(bIndex + 3, bWrite);	
+				bRead = mfc.readBlock(bIndex + 3);
+                    		if (Arrays.equals(bRead, bWrite)) {
+					status = "ok";
+				}					
 			} catch (IOException e) {
 				status = "ko";
 			}	
